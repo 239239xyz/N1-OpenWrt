@@ -1,15 +1,5 @@
-#
-# Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
-# https://github.com/P3TERX/Actions-OpenWrt
-# Description: Build OpenWrt using GitHub Actions
-#
-
 #工作流名字
-name: Build OpenWrt
+name: Build OpenWrt For N1
 
 #前提
 on:
@@ -122,6 +112,9 @@ jobs:
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
+    #输出编译Targets
+    - name: Print Targets
+      run: cd openwrt/target && find $PWD | xargs ls -ld
     #检查空间使用
     - name: Check space usage
       if: (!cancelled())
@@ -194,7 +187,19 @@ jobs:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: ${{ env.FIRMWARE }}/*
-
+    #创建Relsease
+    - name: Create release
+      uses: ncipollo/release-action@v1
+      with:
+        name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
+        allowUpdates: true
+        tag: ${{ env.tag_name }}
+        commit: main
+        token: ${{ secrets.RELEASES_TOKEN }}
+        body: |
+          编译使用版本:
+          ${{ env.useVersionInfo }}
+        artifacts: "${{ env.FIRMWARE }}/*"
     #删除工作流
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
