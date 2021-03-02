@@ -14,16 +14,12 @@ on:
 #环境变量
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
+  PACK_REPO_URL: https://github.com/tuanqing/mknop
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: .config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  UPLOAD_BIN_DIR: true
-  UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: true
-  UPLOAD_WETRANSFER: true
-  UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
 
 #工作
@@ -56,6 +52,8 @@ jobs:
         df -hT $PWD
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
+        ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
     
     #加载自定义的Feeds
     - name: Load custom feeds
@@ -111,108 +109,29 @@ jobs:
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-
-    #检查空间使用
-    - name: Check space usage
-      if: (!cancelled())
-      run: df -hT
-
-    #上传二进制文件夹
-    - name: Upload bin directory
+        
+    #上传Bin目录
+    - name: Upload Bin Directory
       uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      if: steps.compile.outputs.status == 'success'
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: openwrt/bin
-
-    #整理文件
-    - name: Organize files
-      id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+    
+    #打包刷机包
+    - name: Pack the flash package
+      id: flashpackage
+      if: steps.compile.outputs.status == 'success'
       run: |
-        cd openwrt/bin/targets/*/*
-        rm -rf packages
-        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        mv openwrt/bin/targets/armvirt/64/openwrt-armvirt-64-default-rootfs.tar.gz mknop/openwrt/openwrt-armvirt-64-default-rootfs.tar.gz
+        cd mknop
+        sudo ./gen_openwrt -d -s 512 -k latest -m phicomm-n1
         echo "::set-output name=status::success"
-
-    #输出编译Output Bin
-    - name: Print Output Bin
-      run: cd openwrt/bin && find $PWD | xargs ls -ld
-      
-    #上传固件目录
-    - name: Upload firmware directory
+        
+    #上传刷机包
+    - name: Upload  the flash package
       uses: actions/upload-artifact@main
-      if: steps.organize.outputs.status == 'success' && !cancelled()
+      if: steps.flashpackage.outputs.status == 'success'
       with:
-        name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: ${{ env.FIRMWARE }}
-
-    #上传到奶牛快传
-    - name: Upload firmware to cowtransfer
-      id: cowtransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
-        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
-        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
-    
-    #上传We网盘
-    - name: Upload firmware to WeTransfer
-      id: wetransfer
-      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
-        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
-
-    #生成发布标签
-    - name: Generate release tag
-      id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: |
-        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
-        touch release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "::set-output name=status::success"
-    
-    #上传固件到发布
-    - name: Upload firmware to release
-      uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ steps.tag.outputs.release_tag }}
-        body_path: release.txt
-        files: ${{ env.FIRMWARE }}/*
-    #创建Relsease
-    - name: Create release
-      uses: ncipollo/release-action@v1
-      with:
-        name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
-        allowUpdates: true
-        tag: ${{ env.tag_name }}
-        commit: main
-        token: ${{ secrets.RELEASES_TOKEN }}
-        body: |
-          编译使用版本:
-          ${{ env.useVersionInfo }}
-        artifacts: "${{ env.FIRMWARE }}/*"
-    #删除工作流
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 1
-        keep_minimum_runs: 3
-    #删除旧的发布
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 3
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: flashpackage.img
+        path: mknop/out/*/*
