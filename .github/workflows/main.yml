@@ -37,6 +37,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        export HOMEBREW_GITHUB_API_TOKEN=202ca14fb90a3bdaa40b7f09642b58896b0ea0ac
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
