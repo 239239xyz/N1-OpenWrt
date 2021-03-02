@@ -42,11 +42,11 @@ jobs:
         uses: actions/upload-artifact@main
         with:
           name: unload.file
-          path: mknop/gen_openwrt
+          path: /workdir/mknop/gen_openwrt
           
       #上传文件夹
       - name: Upload  file
         uses: actions/upload-artifact@main
         with:
           name: uploadDirectory
-          path: mknop/.github
+          path: /workdir/mknop/.github
