@@ -13,10 +13,6 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-env:
-  PACK_REPO_URL: https://github.com/tuanqing/mknop
-  REPO_BRANCH: master
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
@@ -32,11 +28,10 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
-
-    #克隆源代码
+    #克隆Lede源代码
       - name: Clone source code
         working-directory: /workdir
         run: |
-          git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
+          git clone --depth 1 https://github.com/tuanqing/mknop -b master mknop
           ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
           echo 克隆完成
