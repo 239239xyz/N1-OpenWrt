@@ -27,8 +27,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: sudo mkdir -p /workdir
-    #克隆Lede源代码
+        run: |
+          sudo mkdir -p /workdir
+          sudo chown $USER:$GROUPS /workdir
+      #克隆Lede源代码
       - name: Clone source code
         working-directory: /workdir
         run: |
