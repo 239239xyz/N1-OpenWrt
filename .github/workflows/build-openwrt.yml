@@ -4,7 +4,7 @@ name: Build OpenWrt For N1
 #前提
 on:
   repository_dispatch:
-    types: [Source Code Update]
+    types: [Build OpenWrt For N1]
   workflow_dispatch:
     inputs:
       ssh:
