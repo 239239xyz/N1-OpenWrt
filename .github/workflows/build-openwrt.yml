@@ -54,7 +54,7 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
     
     #加载自定义的Feeds
@@ -67,7 +67,7 @@ jobs:
 
     #更新Feeds
     - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a && git clone https://github.com/tuanqing/install-program package/install-program
+      run: cd openwrt && ./scripts/feeds update -a && git clone --depth 1 https://github.com/tuanqing/install-program package/install-program
 
     #安装Feeds
     - name: Install feeds
@@ -112,9 +112,6 @@ jobs:
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
-    #输出编译Targets
-    - name: Print Targets
-      run: cd openwrt/target && find $PWD | xargs ls -ld
     #检查空间使用
     - name: Check space usage
       if: (!cancelled())
@@ -138,6 +135,10 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
 
+    #输出编译Output Bin
+    - name: Print Output Bin
+      run: cd openwrt/bin && find $PWD | xargs ls -ld
+      
     #上传固件目录
     - name: Upload firmware directory
       uses: actions/upload-artifact@main
