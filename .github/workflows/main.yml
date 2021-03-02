@@ -37,3 +37,16 @@ jobs:
           git clone --depth 1 https://github.com/tuanqing/mknop -b master mknop
           ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
           echo 克隆完成
+      #上传文件
+      - name: Upload  file
+        uses: actions/upload-artifact@main
+        with:
+          name: unload.file
+          path: mknop/gen_openwrt
+          
+      #上传文件夹
+      - name: Upload  file
+        uses: actions/upload-artifact@main
+        with:
+          name: uploadDirectory
+          path: mknop/.github
