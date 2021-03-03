@@ -158,7 +158,7 @@ jobs:
       if: steps.flashpackage.outputs.status == 'success'
       with:
         name: flashpackage
-        path: mknop/out/*/*
+        path: mknop/out/phicomm-n1/*
         
     #清理垃圾
     - name: Clean WorkDirectory
