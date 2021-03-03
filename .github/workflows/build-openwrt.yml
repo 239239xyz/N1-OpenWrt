@@ -54,7 +54,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: /workdir
-        key: Leizhiren-OpenWrt-WorkDirectory
+        key: Leizhiren-OpenWrt-N1-WorkDirectory
         
     #等待SSH连接到Actions
     - name: SSH connection to Actions
