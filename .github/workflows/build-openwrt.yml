@@ -52,7 +52,7 @@ jobs:
       id: cacheHash
       uses: actions/cache@v2
       with:
-        path: /workdir
+        path: $GITHUB_WORKSPACE
         key: Leizhiren-OpenWrt-WorkDirectory
         
     #克隆源代码
