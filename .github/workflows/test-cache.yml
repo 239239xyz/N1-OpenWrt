@@ -10,6 +10,9 @@ on:
         required: true
         default: 'false'
 
+env:
+  TZ: Asia/Shanghai
+
 #工作
 jobs:
   build:
