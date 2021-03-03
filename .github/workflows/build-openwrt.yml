@@ -46,16 +46,36 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
-    #克隆Lede源代码
+    
+    #缓存WorkDir
+    - name: Compare Work Directory
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: /workdir
+        key: Leizhiren-OpenWrt-WorkDirectory
+        
+    #克隆源代码
     - name: Clone source code
       working-directory: /workdir
+      if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
         df -hT $PWD
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+        git clone --depth 1 https://github.com/tuanqing/install-program openwrt/package/utils/install-program
+        ln -sf /workdir/openwrt/package/utils/install-program $GITHUB_WORKSPACE/openwrt/package/utils/install-program
         git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
     
+    #更新源码
+    - name: Update source code
+      working-directory: /workdir
+      run: |
+        cd /workdir/openwrt && git pull
+        cd /workdir/openwrt/package/utils/install-program && git pull
+        cd /workdir/mknop && git pull
+        
     #加载自定义的Feeds
     - name: Load custom feeds
       run: |
@@ -66,7 +86,9 @@ jobs:
 
     #更新Feeds
     - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a && git clone --depth 1 https://github.com/tuanqing/install-program package/install-program
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
 
     #安装Feeds
     - name: Install feeds
