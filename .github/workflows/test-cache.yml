@@ -33,13 +33,14 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
+        ln -sf /workdir $GITHUB_WORKSPACE
     
     #缓存WorkDir
     - name: Compare Work Directory
       id: cacheHash
       uses: actions/cache@v2
       with:
-        path: $GITHUB_WORKSPACE
+        path: /workdir
         key: Leizhiren-OpenWrt-WorkDirectory
 
     #等待SSH连接到Actions
