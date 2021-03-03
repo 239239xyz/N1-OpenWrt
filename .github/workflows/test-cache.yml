@@ -33,6 +33,7 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
+        ln -sf /workdir $GITHUB_WORKSPACE
     
     #缓存WorkDir
     - name: Compare Work Directory
