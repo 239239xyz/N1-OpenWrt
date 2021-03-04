@@ -60,14 +60,6 @@ jobs:
         git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
         
-    #更新源码
-    - name: Update source code
-      working-directory: /workdir
-      run: |
-        cd /workdir/openwrt && git pull
-        cd /workdir/openwrt/package/utils/install-program && git pull
-        cd /workdir/mknop && git pull
-        
     #打印目录大小
     - name: print working-directory size
       working-directory: /workdir
@@ -90,6 +82,7 @@ jobs:
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
+        cat openwrt/feeds.conf.default
 
     #更新Feeds
     - name: Update feeds
@@ -109,6 +102,7 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
+        cat openwrt/.config
     
     #等待SSH连接到Actions
     - name: SSH connection to Actions
