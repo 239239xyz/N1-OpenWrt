@@ -56,14 +56,13 @@ jobs:
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         git clone --depth 1 https://github.com/tuanqing/install-program openwrt/package/utils/install-program
-        ln -sf /workdir/openwrt/package/utils/install-program $GITHUB_WORKSPACE/openwrt/package/utils/install-program
         git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
         
     #打印目录大小
     - name: print working-directory size
       working-directory: /workdir
-      run: du -h --max-depth=5 ./
+      run: du -h --max-depth=2 ./
       
     #还原编译缓存
     - name: Compare Work Directory
