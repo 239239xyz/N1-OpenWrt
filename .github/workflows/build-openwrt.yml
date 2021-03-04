@@ -173,8 +173,8 @@ jobs:
       with:
         tag_name: $(date +"%Y.%m.%d-%H%M")
         files: |
-            openwrt/bin/targets/armvirt/64/openwrt-armvirt-64-default-rootfs.tar.gz
-            mknop/out/phicomm-n1/*
+          openwrt/bin/targets/armvirt/64/openwrt-armvirt-64-default-rootfs.tar.gz
+          mknop/out/phicomm-n1/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
