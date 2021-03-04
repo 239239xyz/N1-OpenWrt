@@ -18,7 +18,7 @@ env:
   PACK_REPO_URL: https://github.com/tuanqing/mknop
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: .config
+  CONFIG_FILE: Config/N1.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   TZ: Asia/Shanghai
@@ -47,19 +47,10 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
         ln -sf /workdir $GITHUB_WORKSPACE
-    
-    #缓存WorkDir
-    - name: Compare Work Directory
-      id: cacheHash
-      uses: actions/cache@v2
-      with:
-        path: /workdir
-        key: Leizhiren-OpenWrt-N1-WorkDirectory
                
     #克隆源代码
     - name: Clone source code
       working-directory: /workdir
-      if: steps.cacheHash.outputs.cache-hit != 'true'
       run: |
         df -hT $PWD
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
@@ -68,7 +59,7 @@ jobs:
         ln -sf /workdir/openwrt/package/utils/install-program $GITHUB_WORKSPACE/openwrt/package/utils/install-program
         git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
-    
+        
     #更新源码
     - name: Update source code
       working-directory: /workdir
@@ -76,6 +67,21 @@ jobs:
         cd /workdir/openwrt && git pull
         cd /workdir/openwrt/package/utils/install-program && git pull
         cd /workdir/mknop && git pull
+        
+    #打印目录大小
+    - name: print working-directory size
+      working-directory: /workdir
+      run: du -h --max-depth=5 ./
+      
+    #还原编译缓存
+    - name: Compare Work Directory
+      id: cacheHash
+      uses: actions/cache@v2
+      with:
+        path: |
+            /workdir/openwrt/bin
+            /workdir/openwrt/dl
+        key: Leizhiren-N1-OpenWrt-WorkDirectory
         
     #加载自定义的Feeds
     - name: Load custom feeds
@@ -140,7 +146,7 @@ jobs:
       if: steps.compile.outputs.status == 'success'
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: openwrt/bin
+        path: openwrt/bin/targets
     
     #打包刷机包
     - name: Pack the flash package
@@ -160,6 +166,32 @@ jobs:
         name: flashpackage
         path: mknop/out/phicomm-n1/*
         
+    #发布到Release    
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: steps.flashpackage.outputs.status == 'success'
+        with:
+          tag_name: $(date +"%Y.%m.%d-%H%M")
+          files: |
+            openwrt/bin/targets/armvirt/64/openwrt-armvirt-64-default-rootfs.tar.gz
+            mknop/out/phicomm-n1/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    #删除旧的Release
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      with:
+        keep_latest: 7
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        
+    #打印目录大小
+    - name: print working-directory size
+      working-directory: /workdir
+      run: du -h --max-depth=5 ./
+
     #清理垃圾
     - name: Clean WorkDirectory
       run: |
