@@ -82,7 +82,7 @@ jobs:
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
-        cat openwrt/feeds.conf.default
+        cat feeds.conf.default
 
     #更新Feeds
     - name: Update feeds
@@ -102,7 +102,7 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        cat openwrt/.config
+        cat .config
     
     #等待SSH连接到Actions
     - name: SSH connection to Actions
