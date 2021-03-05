@@ -18,7 +18,7 @@ env:
 on:
   workflow_dispatch:
   schedule:
-    - cron: 00 15 * * *
+    - cron: 0 17 * * *    # 每天的 20:00 执行该文件定义的动作
 
 jobs:
   check:
