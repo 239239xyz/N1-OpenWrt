@@ -7,4 +7,3 @@ src-git helloworld https://github.com/fw876/helloworld
 src-git lienol https://github.com/Lienol/openwrt-package
 src-git diy https://github.com/CCnut/feed-netkeeper
 src-git kenzo https://github.com/kenzok8/openwrt-packages
-src-git small https://github.com/kenzok8/small
