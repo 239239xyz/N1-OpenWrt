@@ -53,10 +53,10 @@ jobs:
       working-directory: /workdir
       run: |
         df -hT $PWD
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-        git clone --depth 1 https://github.com/tuanqing/install-program openwrt/package/utils/install-program
-        git clone --depth 1 $PACK_REPO_URL -b $REPO_BRANCH mknop
+        git clone https://github.com/tuanqing/install-program openwrt/package/utils/install-program
+        git clone $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
         
     #打印目录大小
