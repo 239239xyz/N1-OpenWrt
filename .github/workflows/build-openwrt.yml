@@ -22,7 +22,7 @@ env:
   PACK_REPO_URL: https://github.com/tuanqing/mknop
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: $(github.event.inputs.defconfig)
+  CONFIG_FILE: Config/def.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   TZ: Asia/Shanghai
@@ -42,7 +42,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        echo $CONFIG_FILE
+        echo github.event.inputs.defconfig
         sudo rm -rf /
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
