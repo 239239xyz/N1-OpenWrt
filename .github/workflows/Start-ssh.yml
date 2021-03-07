@@ -1,6 +1,9 @@
 #工作流名字
 name: Start SSH Servcer
 
+on:
+  workflow_dispatch:
+
 #环境变量
 env:
   TZ: Asia/Shanghai
