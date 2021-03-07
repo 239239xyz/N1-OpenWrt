@@ -18,9 +18,7 @@ env:
   PACK_REPO_URL: https://github.com/tuanqing/mknop
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: Config/def.config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
+  CONFIG_FILE: .config
   TZ: Asia/Shanghai
 
 #工作
@@ -55,9 +53,12 @@ jobs:
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-        git clone https://github.com/tuanqing/install-program openwrt/package/utils/install-program
         git clone $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
+        cd openwrt
+        git clone https://github.com/vernesong/OpenClash package/Network/VPN/OpenClash
+        git clone https://github.com/tuanqing/install-program package/utils/install-program
+        git clone https://github.com/kenzok8/small.git package/small
         
     #打印目录大小
     - name: print working-directory size
@@ -78,20 +79,14 @@ jobs:
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
-        cat feeds.conf.default
+        cat openwrt/feeds.conf.default
         
     #加载自定义的Config
     - name: Load custom configuration
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
-        cat .config
+        cat openwrt/.config
         
     #修改默认网络
     - name: Load custom configuration
@@ -108,9 +103,7 @@ jobs:
 
     #更新Feeds
     - name: Update feeds
-      run: |
-        cd openwrt
-        ./scripts/feeds update -a
+      run: cd openwrt && ./scripts/feeds update -a
 
     #安装Feeds
     - name: Install feeds
@@ -134,9 +127,6 @@ jobs:
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 || make -j1 V=s
         echo "::set-output name=status::success"
-        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
-        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
-        echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
         
     #上传Bin目录
     - name: Upload Bin Directory
