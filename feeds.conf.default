@@ -8,3 +8,5 @@ src-git lienol https://github.com/Lienol/openwrt-package
 src-git diy https://github.com/CCnut/feed-netkeeper
 src-git kenzo https://github.com/kenzok8/openwrt-packages
 src-git small https://github.com/kenzok8/small
+src-git vernesong https://github.com/vernesong/OpenClash
+src-git tuanqing https://github.com/tuanqing/install-program
