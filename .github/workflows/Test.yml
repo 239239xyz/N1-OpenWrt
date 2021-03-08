@@ -53,7 +53,6 @@ jobs:
     #发布到Release    
     - name: Release
       uses: softprops/action-gh-release@v1
-      if: steps.flashpackage.outputs.status == 'success'
       with:
         tag_name: TestRelease
         files: |
