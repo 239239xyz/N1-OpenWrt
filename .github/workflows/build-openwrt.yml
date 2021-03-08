@@ -18,7 +18,7 @@ env:
   PACK_REPO_URL: https://github.com/tuanqing/mknop
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: .config
+  CONFIG_FILE: def.config
   TZ: Asia/Shanghai
 
 #工作
