@@ -37,7 +37,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
-        tag: ${{ env.tag_name }}
+        tag_name: ${{ env.tag_name }}
         files: Release.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
