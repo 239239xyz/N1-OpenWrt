@@ -27,26 +27,3 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
         ln -sf /workdir $GITHUB_WORKSPACE
-        echo "DATE=$(date "+%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
-        echo "tag_name=$(date +%Y%m%d)" >> $GITHUB_ENV
-
-    #发布到Release    
-    - name: Build
-      run: echo ${{ github.sha }} > Release.txt
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-        name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
-        tag_name: ${{ env.tag_name }}
-        files: Release.txt
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    #删除旧的Release
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      with:
-        keep_latest: 7
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -153,13 +153,20 @@ jobs:
       with:
         name: flashpackage
         path: mknop/out/phicomm-n1/*
-        
+    
+    #生成Release参数
+    - name: Generate Release Parms
+      run: |
+        echo "DATE=$(date "+%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        echo "tag_name=$(date +%Y%m%d)" >> $GITHUB_ENV
+    
     #发布到Release    
     - name: Release
       uses: softprops/action-gh-release@v1
       if: steps.flashpackage.outputs.status == 'success'
       with:
-        tag_name: $(date +"%Y.%m.%d-%H%M")
+        name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
+        tag_name: ${{ env.tag_name }}
         files: |
           openwrt/bin/targets/armvirt/64/openwrt-armvirt-64-default-rootfs.tar.gz
           mknop/out/phicomm-n1/*
