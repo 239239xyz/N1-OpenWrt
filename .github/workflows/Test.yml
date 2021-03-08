@@ -35,7 +35,7 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.DATE }} ❤️ | Phicomm N1 OpenWrt 自动编译
+        tag_name: ${{ env.DATE }} ❤️
         files: Release.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
