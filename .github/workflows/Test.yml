@@ -35,8 +35,9 @@ jobs:
       run: cat Release.txt
     - name: Release
       uses: softprops/action-gh-release@v1
-      tag: Release
+      tag_name: Release
       with:
+        body: Test Release
         files: Release.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
