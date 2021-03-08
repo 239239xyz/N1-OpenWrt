@@ -27,6 +27,7 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
         ln -sf /workdir $GITHUB_WORKSPACE
+        echo "DATE=$(date "+%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
 
     #发布到Release    
     - name: Build
@@ -36,7 +37,7 @@ jobs:
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: $(date +"%Y.%m.%d-%H%M")
+        tag_name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
         files: Release.txt
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
