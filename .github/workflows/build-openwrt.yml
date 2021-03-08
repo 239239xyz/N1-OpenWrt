@@ -56,9 +56,7 @@ jobs:
         git clone $PACK_REPO_URL -b $REPO_BRANCH mknop
         ln -sf /workdir/mknop $GITHUB_WORKSPACE/mknop
         cd openwrt
-        git clone https://github.com/vernesong/OpenClash package/Network/VPN/OpenClash
         git clone https://github.com/tuanqing/install-program package/utils/install-program
-        git clone https://github.com/kenzok8/small.git package/small
         
     #打印目录大小
     - name: print working-directory size
