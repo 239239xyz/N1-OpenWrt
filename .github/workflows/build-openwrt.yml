@@ -159,10 +159,11 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: steps.flashpackage.outputs.status == 'success'
       with:
-        tag_name: $(date +"%Y.%m.%d-%H%M")
         files: |
           openwrt/bin/targets/armvirt/64/openwrt-armvirt-64-default-rootfs.tar.gz
           mknop/out/phicomm-n1/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     #删除旧的Release
     - name: Remove old Releases
@@ -170,6 +171,8 @@ jobs:
       with:
         keep_latest: 7
         delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     #打印目录大小
     - name: print working-directory size
