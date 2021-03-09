@@ -71,8 +71,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-            /workdir/openwrt/bin
-            /workdir/openwrt/dl
+            $REPO_BRANCH/openwrt/bin
+            $REPO_BRANCH/openwrt/dl
         key: Leizhiren-N1-OpenWrt-WorkDirectory
         
     #加载自定义的Feeds
