@@ -164,8 +164,11 @@ jobs:
     #生成Release参数
     - name: Generate Release Parms
       run: |
+        cd openwrt
         echo "DATE=$(date "+%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
         echo "tag_name=$(date +%Y%m%d)" >> $GITHUB_ENV
+        useVersionInfo=$(git show -s --date=short --format="date: %cd<br/>commit: %s<br/>commit hash: %H")
+        echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
     
     #发布到Release    
     - name: Release
@@ -174,6 +177,9 @@ jobs:
       with:
         name: ${{ env.DATE }} ❤️ | N1-OpenWrt 自动编译
         tag_name: ${{ env.tag_name }}
+        body: |
+          编译使用版本:
+          ${{ env.useVersionInfo }}
         files: |
           openwrt/.config
           openwrt/feeds.conf.default
