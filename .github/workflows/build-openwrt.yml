@@ -26,11 +26,7 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     #步骤
-    steps:
-    #检出当前仓库
-    - name: Checkout
-      uses: actions/checkout@main
-      
+    steps:     
     #初始化环境变量
     - name: Initialization environment
       env:
@@ -45,6 +41,12 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
         ln -sf /workdir $GITHUB_WORKSPACE
+        git config --global user.email "574863304@qq.com"
+        git config --global user.name "仁哥哥"
+        
+    #检出当前仓库
+    - name: Checkout
+      uses: actions/checkout@main
                
     #克隆源代码
     - name: Clone source code
