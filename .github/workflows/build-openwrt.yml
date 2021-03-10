@@ -87,9 +87,6 @@ jobs:
     #加载自定义的Config
     - name: Load custom configuration
       run: |
-        [ -e files ]
-        mv files openwrt/files
-        [ -e ${{ github.event.inputs.config_path }} ]
         mv ${{ github.event.inputs.config_path }} openwrt/.config
         cat openwrt/.config
         
