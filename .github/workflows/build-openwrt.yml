@@ -95,6 +95,7 @@ jobs:
     - name: Motify Default Network Ip Address
       run: |
         sed -i 's/192.168.1.1/192.168.3.100/g' openwrt/package/base-files/files/bin/config_generate
+        echo "iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE" >> package/network/config/firewall/files/firewall.user
 
     #更新Feeds
     - name: Update feeds
