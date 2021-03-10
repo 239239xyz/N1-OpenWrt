@@ -94,7 +94,7 @@ jobs:
     #修改默认网络
     - name: Motify Default Network Ip Address
       run: |
-        sed -i 's/192.168.1.1/192.168.31.2/g' openwrt/package/base-files/files/bin/config_generate
+        sed -i 's/192.168.1.1/192.168.3.100/g' openwrt/package/base-files/files/bin/config_generate
 
     #更新Feeds
     - name: Update feeds
