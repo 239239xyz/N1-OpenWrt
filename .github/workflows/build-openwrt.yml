@@ -74,8 +74,9 @@ jobs:
       uses: actions/cache@v2
       with:
         path: |
-            $REPO_BRANCH/openwrt/bin
-            $REPO_BRANCH/openwrt/dl
+            $GITHUB_WORKSPACE/openwrt/bin
+            $GITHUB_WORKSPACE/openwrt/dl
+            $GITHUB_WORKSPACE/openwrt/staging_dir
         key: Leizhiren-N1-OpenWrt-WorkDirectory
         
     #加载自定义的Feeds
