@@ -11,6 +11,10 @@ on:
         description: 'SSH connection to Actions'
         required: true
         default: 'false'
+      config_path:
+        description: 'select input config path'
+        required: true
+        default: '.config'
 
 #环境变量
 env:
@@ -32,6 +36,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        echo ${{ config_path }}
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
