@@ -1,5 +1,5 @@
 #工作流名字
-name: Build OpenWrt For N1
+name: Test
 
 #前提
 on:
